@@ -1,4 +1,4 @@
-// ゲーム一覧。新しいゲームは下に import して配列へ追加するだけ。
+﻿// ゲーム一覧。新しいゲームは下に import して配列へ追加するだけ。
 //
 // 各ゲームの形式:
 //   { id, name, desc, create(ctx) -> { onMessage(data), destroy() } }
@@ -6,6 +6,6 @@
 import othello from "./othello.js";
 import connect4 from "./connect4.js";
 import reaction from "./reaction.js";
-import bugbattle from "./bugbattle.js";
+import mushi from "./mushi.js";
 
-export const games = [othello, connect4, reaction, bugbattle];
+export const games = [othello, connect4, reaction, mushi];

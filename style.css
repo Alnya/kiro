@@ -84,25 +84,39 @@ button.small { font-size: 14px; padding: 8px 12px; }
 .react-pad.lost { background: #5d4a6b; }
 .react-pad.end { background: #8e6b00; }
 
-/* むしカードバトル */
-.bb-arena { display: flex; align-items: center; justify-content: center; gap: 8px; }
-.bb-slot { flex: 1; max-width: 150px; }
-.bb-vs { font-weight: bold; color: #ffd966; }
-.bb-hand { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
-.bb-card {
-  border-radius: 8px; padding: 6px 2px; text-align: center; border: 2px solid transparent;
-  background: #2b4034; color: #f2f2f2; min-height: 84px; display: flex; flex-direction: column; justify-content: space-between;
+/* 甲虫じゃんけんバトル */
+.mk { display: flex; flex-direction: column; gap: 10px; }
+.mk-bugs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.mk-bug {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; padding: 10px;
+  font-size: 12px; background: hsl(var(--hue) 35% 22%); border: 2px solid transparent;
 }
-.bb-slot .bb-card { min-height: 130px; padding: 10px 4px; }
-.bb-ic { font-size: 28px; line-height: 1.1; }
-.bb-slot .bb-ic { font-size: 44px; }
-.bb-name { font-size: 10px; line-height: 1.2; word-break: break-all; }
-.bb-slot .bb-name { font-size: 13px; }
-.bb-meta { font-size: 11px; }
-.bb-meta b { font-size: 15px; }
-.bb-card.t-power { background: #8a2f2f; }
-.bb-card.t-tech { background: #2c5a8f; }
-.bb-card.t-speed { background: #2f7a45; }
-.bb-card.bb-back { background: #3a3f4a; justify-content: center; gap: 6px; }
-.bb-card.used { opacity: .3; }
-.bb-card.sel { border-color: #ffd966; transform: translateY(-4px); }
+.mk-bug b { font-size: 14px; }
+.mk-bug.sel { border-color: #ffd966; }
+.mk-ic { font-size: 22px; }
+.mk-info { text-align: center; color: #b9c9bf; font-size: 14px; }
+.mk-slot { display: flex; flex-direction: column; gap: 4px; font-size: 15px; background: #22352b; padding: 8px; border-radius: 8px; }
+.mk-slot select { font-size: 15px; padding: 8px; border-radius: 6px; background: #0f1a14; color: #f2f2f2; border: 1px solid #4b6356; }
+.mk-prev { font-size: 12px; color: #b9c9bf; line-height: 1.4; }
+
+.mk-field { display: flex; flex-direction: column; gap: 6px; }
+.mk-vs { text-align: center; font-weight: bold; color: #ffd966; }
+.mk-fighter { background: hsl(var(--hue) 30% 20%); border-radius: 10px; padding: 8px 10px; }
+.mk-fighter.mine { border: 2px solid #2e8b57; }
+.mk-fname { font-size: 14px; }
+.mk-hp { position: relative; height: 22px; background: #111; border-radius: 6px; overflow: hidden; margin-top: 4px; }
+.mk-hp-fill { height: 100%; background: #3ac569; transition: width .5s; }
+.mk-hp-fill.low { background: #e25555; }
+.mk-hp span { position: absolute; inset: 0; text-align: center; line-height: 22px; font-size: 13px; font-weight: bold; text-shadow: 0 0 3px #000; }
+.mk-chips { display: flex; flex-wrap: wrap; gap: 4px; min-height: 4px; margin-top: 4px; }
+.chip { font-size: 11px; background: #444b57; padding: 2px 6px; border-radius: 10px; }
+.mk-log { background: #0f1a14; border-radius: 8px; padding: 8px 10px; font-size: 13px; line-height: 1.6; min-height: 64px; }
+.mk-hands { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.mk-hand { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 4px; }
+.mk-hand small { font-size: 11px; color: #b9c9bf; }
+.mk-hand.sel { border-color: #ffd966; background: #3d5a46; }
+.mk-hi { font-size: 34px; }
+.mk-gauge { position: relative; height: 36px; background: linear-gradient(90deg, #8a2f2f, #c9a227 35%, #3ac569 45%, #3ac569 55%, #c9a227 65%, #8a2f2f); border-radius: 8px; }
+.mk-zone { position: absolute; left: 45%; width: 10%; top: 0; bottom: 0; border: 2px solid #fff; border-radius: 4px; }
+.mk-cursor { position: absolute; top: -4px; bottom: -4px; width: 6px; margin-left: -3px; background: #fff; border-radius: 3px; box-shadow: 0 0 6px #000; }
+.mk-end { font-size: 22px; font-weight: bold; }

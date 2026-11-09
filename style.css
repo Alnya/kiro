@@ -120,3 +120,74 @@ button.small { font-size: 14px; padding: 8px 12px; }
 .mk-zone { position: absolute; left: 45%; width: 10%; top: 0; bottom: 0; border: 2px solid #fff; border-radius: 4px; }
 .mk-cursor { position: absolute; top: -4px; bottom: -4px; width: 6px; margin-left: -3px; background: #fff; border-radius: 3px; box-shadow: 0 0 6px #000; }
 .mk-end { font-size: 22px; font-weight: bold; }
+
+/* ビッグスターバトル */
+.vs-set { display: flex; flex-direction: column; gap: 10px; }
+.vs-opt { display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
+.vs-opt select { font-size: 16px; padding: 10px; border-radius: 8px; background: #0f1a14; color: #f2f2f2; border: 1px solid #4b6356; }
+.vs-opt select:disabled { opacity: .75; }
+.vs-help { font-size: 13px; color: #b9c9bf; line-height: 1.6; }
+.vs-help summary { cursor: pointer; padding: 4px 0; }
+
+body.vs-playing { overflow: hidden; }
+.vs-overlay {
+  position: fixed; inset: 0; z-index: 1000; background: #000; overflow: hidden;
+  touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+}
+.vs-canvas {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: contain; object-position: center top; image-rendering: pixelated; image-rendering: crisp-edges;
+}
+.vs-hud {
+  position: absolute; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: flex-start; gap: 6px;
+  padding: calc(4px + env(safe-area-inset-top)) calc(44px + env(safe-area-inset-right)) 0 calc(6px + env(safe-area-inset-left));
+  pointer-events: none; color: #fff; font-size: 12px; line-height: 1.35; text-shadow: 0 1px 2px #000, 0 0 3px #000;
+}
+.vs-card { background: rgba(0, 0, 0, .45); border-radius: 8px; padding: 3px 8px; min-width: 96px; }
+.vs-card .vs-name { font-weight: bold; font-size: 12px; text-shadow: 0 1px 2px #000; filter: brightness(1.5); }
+.vs-card small { color: #fff; opacity: .8; font-weight: normal; }
+.vs-stars { font-size: 15px; }
+.vs-stars b { color: #ffd400; font-size: 18px; }
+.vs-stars.pulse { animation: vs-pulse .5s infinite alternate; }
+@keyframes vs-pulse { from { transform: scale(1); } to { transform: scale(1.18); } }
+.vs-sub { font-size: 11px; opacity: .9; }
+.vs-tags { font-size: 10px; color: #ffe27a; min-height: 12px; }
+.vs-center { text-align: center; font-size: 12px; background: rgba(0, 0, 0, .3); border-radius: 8px; padding: 2px 8px; }
+.vs-banner {
+  position: absolute; top: 28%; left: 0; right: 0; text-align: center; font-size: 30px; font-weight: bold; color: #fff;
+  text-shadow: 0 3px 0 #000, 0 0 8px rgba(0, 0, 0, .8); pointer-events: none;
+}
+.vs-banner.warn { font-size: 16px; color: #ffd966; }
+.vs-quit, .vs-mute {
+  position: absolute; top: calc(4px + env(safe-area-inset-top)); width: 34px; height: 34px; padding: 0; border-radius: 50%;
+  font-size: 15px; background: rgba(0, 0, 0, .5); border: 1px solid rgba(255, 255, 255, .4); color: #fff;
+}
+.vs-quit { right: calc(4px + env(safe-area-inset-right)); }
+.vs-mute { right: calc(42px + env(safe-area-inset-right)); }
+.vs-end { position: absolute; inset: 0; background: rgba(0, 0, 0, .65); display: flex; align-items: center; justify-content: center; }
+.vs-end.hidden { display: none; }
+.vs-endbox { background: #1b2a22; border-radius: 14px; padding: 18px 22px; display: flex; flex-direction: column; gap: 10px; text-align: center; min-width: 260px; }
+.vs-endbox h2 { margin: 0; font-size: 26px; }
+
+.vs-pad {
+  position: absolute; left: 0; right: 0; bottom: 0; display: flex; justify-content: space-between; align-items: flex-end;
+  padding: 0 calc(14px + env(safe-area-inset-right)) calc(14px + env(safe-area-inset-bottom)) calc(14px + env(safe-area-inset-left));
+  pointer-events: none;
+}
+.vs-left { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+.vs-right { display: flex; align-items: flex-end; gap: 14px; }
+.vs-pad > * > * { pointer-events: auto; touch-action: none; }
+.vs-dpad {
+  display: flex; justify-content: space-between; align-items: center; width: 168px; height: 74px; padding: 0 16px;
+  border-radius: 40px; background: rgba(255, 255, 255, .18); border: 2px solid rgba(255, 255, 255, .45); color: #fff; font-size: 24px;
+}
+.vs-dpad span { opacity: .7; }
+.vs-dpad.l span:first-child, .vs-dpad.r span:last-child { opacity: 1; color: #ffd400; }
+.vs-btn {
+  border-radius: 50%; border: 2px solid rgba(255, 255, 255, .55); background: rgba(255, 255, 255, .2); color: #fff;
+  font-weight: bold; padding: 0; line-height: 1.1; text-shadow: 0 1px 2px #000;
+}
+.vs-btn.on { background: rgba(255, 212, 0, .55); }
+.vs-down { width: 52px; height: 52px; font-size: 18px; }
+.vs-run { width: 66px; height: 66px; font-size: 11px; }
+.vs-jump { width: 88px; height: 88px; font-size: 14px; background: rgba(229, 57, 53, .45); }

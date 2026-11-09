@@ -7,5 +7,6 @@ import othello from "./othello.js";
 import connect4 from "./connect4.js";
 import reaction from "./reaction.js";
 import mushi from "./mushi.js";
+import vs from "./vs.js";
 
-export const games = [othello, connect4, reaction, mushi];
+export const games = [othello, connect4, reaction, mushi, vs];

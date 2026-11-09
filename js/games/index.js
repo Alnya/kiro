@@ -6,5 +6,6 @@
 import othello from "./othello.js";
 import connect4 from "./connect4.js";
 import reaction from "./reaction.js";
+import bugbattle from "./bugbattle.js";
 
-export const games = [othello, connect4, reaction];
+export const games = [othello, connect4, reaction, bugbattle];

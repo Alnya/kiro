@@ -83,3 +83,26 @@ button.small { font-size: 14px; padding: 8px 12px; }
 .react-pad.won { background: #2e6fb5; }
 .react-pad.lost { background: #5d4a6b; }
 .react-pad.end { background: #8e6b00; }
+
+/* むしカードバトル */
+.bb-arena { display: flex; align-items: center; justify-content: center; gap: 8px; }
+.bb-slot { flex: 1; max-width: 150px; }
+.bb-vs { font-weight: bold; color: #ffd966; }
+.bb-hand { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.bb-card {
+  border-radius: 8px; padding: 6px 2px; text-align: center; border: 2px solid transparent;
+  background: #2b4034; color: #f2f2f2; min-height: 84px; display: flex; flex-direction: column; justify-content: space-between;
+}
+.bb-slot .bb-card { min-height: 130px; padding: 10px 4px; }
+.bb-ic { font-size: 28px; line-height: 1.1; }
+.bb-slot .bb-ic { font-size: 44px; }
+.bb-name { font-size: 10px; line-height: 1.2; word-break: break-all; }
+.bb-slot .bb-name { font-size: 13px; }
+.bb-meta { font-size: 11px; }
+.bb-meta b { font-size: 15px; }
+.bb-card.t-power { background: #8a2f2f; }
+.bb-card.t-tech { background: #2c5a8f; }
+.bb-card.t-speed { background: #2f7a45; }
+.bb-card.bb-back { background: #3a3f4a; justify-content: center; gap: 6px; }
+.bb-card.used { opacity: .3; }
+.bb-card.sel { border-color: #ffd966; transform: translateY(-4px); }

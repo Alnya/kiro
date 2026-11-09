@@ -1,6 +1,6 @@
 ﻿# ミニゲーム対戦(QR接続・サーバー不要)
 
-GitHub Pages などの静的ホスティングだけで動く、スマホ同士の2人対戦ミニゲーム集です(オセロ / 四目並べ / 反射神経バトル)。
+GitHub Pages などの静的ホスティングだけで動く、スマホ同士の2人対戦ミニゲーム集です(オセロ / 四目並べ / 反射神経バトル / むしカードバトル)。
 WebRTC DataChannel で端末同士が直接通信し、接続情報はQRコード(またはコピー&ペースト)で交換します。
 
 ## 遊び方
@@ -19,7 +19,7 @@ WebRTC DataChannel で端末同士が直接通信し、接続情報はQRコー�
 ## 構成
 - `index.html` / `style.css` — 画面
 - `js/othello.js` — オセロのルール(純粋ロジック)
-- `js/games/` — 各ゲーム(`othello.js` `connect4.js` `reaction.js`)と一覧 `index.js`
+- `js/games/` — 各ゲーム(`othello.js` `connect4.js` `reaction.js` `bugbattle.js`)と一覧 `index.js`
 - `js/rtc.js` — WebRTC と接続コードの圧縮/展開
 - `js/app.js` — UI・QR・対戦制御
 - `vendor/` — qrcode-generator(MIT)、jsQR(Apache-2.0)

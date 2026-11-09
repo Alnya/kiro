@@ -8,5 +8,6 @@ import connect4 from "./connect4.js";
 import reaction from "./reaction.js";
 import mushi from "./mushi.js";
 import vs from "./vs.js";
+import spire from "./spire.js";
 
-export const games = [othello, connect4, reaction, mushi, vs];
+export const games = [othello, connect4, reaction, mushi, vs, spire];

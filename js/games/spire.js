@@ -285,6 +285,7 @@ function create({ root, role, send }) {
       ${selInfo}
       <div class="sp-hand">${hand || `<div class="sp-empty">手札なし</div>`}</div>
       <div class="sp-bar">
+        <button class="sp-pile" data-a="deck">デッキ<br><b>${p.deck.length}</b></button>
         <button class="sp-pile" data-a="pile" data-w="draw">山札<br><b>${p.draw.length}</b></button>
         <button class="sp-pile" data-a="pile" data-w="disc">捨札<br><b>${p.disc.length}</b></button>
         ${potionRow()}
@@ -373,8 +374,8 @@ function create({ root, role, send }) {
     if (!m || !S) return "";
     let inner = "";
     const p = mePl();
-    if (m.t === "deck" || m.t === "mate") {
-      const q = m.t === "deck" ? p : ally();
+    if (m.t === "deck") {
+      const q = S.players[m.who !== undefined ? m.who : me];
       const cards = [...q.deck].sort((a, b) => CARDS[a.c].type.localeCompare(CARDS[b.c].type) || CARDS[a.c].name.localeCompare(CARDS[b.c].name));
       inner = `<h3>${CLASSES[q.cls].ic} ${esc(q.name)}のデッキ(${q.deck.length}枚)</h3>
         <div class="sp-mrel">${q.relics.map((r) => `<span class="sp-rl" title="${esc(RELICS[r].name)}">${RELICS[r].ic} <small>${esc(RELICS[r].name)}:${esc(RELICS[r].desc)}</small></span>`).join("")}</div>
@@ -402,7 +403,7 @@ function create({ root, role, send }) {
     const q = S.players[i];
     const sts = Object.entries(q.st).filter(([, v]) => v).map(([k, v]) => `<li><b>${statusNames[k] || k}${["barricade", "link", "taunt", "sleep"].includes(k) ? "" : " " + v}</b>:${esc((statusDesc[k] || "").replace(/n/g, Math.abs(v)))}</li>`).join("");
     return `<h3>${CLASSES[q.cls].ic} ${esc(q.name)}</h3><p>HP ${q.hp}/${q.maxHp}・エナジー${q.energy}</p><ul>${sts || "<li>状態異常なし</li>"}</ul>
-      <button data-a="mate2" data-i="${i}">デッキとレリックを見る</button>`;
+      <button data-a="mate2" data-i="${i}">${i === me ? "自分" : esc(q.name)}のデッキとレリックを見る</button>`;
   }
 
   // ================= 入力 =================
@@ -418,9 +419,9 @@ function create({ root, role, send }) {
     if (ui.modal && a !== "pickdeck" && a !== "mate2") return;
     switch (a) {
       case "menu": if (confirm("冒険をやめてゲーム選択にもどりますか?")) document.getElementById("btn-to-lobby").click(); break;
-      case "deck": ui.modal = { t: "deck" }; render(); break;
-      case "mate": ui.modal = { t: "mate" }; render(); break;
-      case "mate2": ui.modal = { t: "mate" }; render(); break;
+      case "deck": ui.modal = { t: "deck", who: me }; render(); break;
+      case "mate": ui.modal = { t: "deck", who: 1 - me }; render(); break;
+      case "mate2": ui.modal = { t: "deck", who: +d.i }; render(); break;
       case "pile": ui.modal = { t: "pile", w: d.w }; render(); break;
       case "relic": ui.modal = { t: "info", html: `<h3>${RELICS[d.r].ic} ${esc(RELICS[d.r].name)}</h3><p>${esc(RELICS[d.r].desc)}</p>` }; render(); break;
       case "card": {

@@ -1,19 +1,19 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>オセロ対戦(QR接続)</title>
+  <title>ミニゲーム対戦(QR接続)</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <main>
     <!-- メニュー -->
     <section id="screen-menu" class="screen">
-      <h1>オセロ対戦</h1>
+      <h1>ミニゲーム対戦</h1>
       <p class="note">同じWi-Fiのスマホ同士で対戦できます。サーバー不要、QRコードで接続します。</p>
-      <button id="btn-host" class="primary">対戦を作成(先手・黒)</button>
-      <button id="btn-join">対戦に参加(後手・白)</button>
+      <button id="btn-host" class="primary">対戦を作成(招待QRを出す側)</button>
+      <button id="btn-join">対戦に参加(QRを読み取る側)</button>
     </section>
 
     <!-- ホスト: 手順1 招待コード表示 -->
@@ -54,7 +54,7 @@
     <!-- ゲスト: 手順2 返信コード表示 -->
     <section id="screen-join2" class="screen hidden">
       <h2>② 返信コード</h2>
-      <p class="note">相手のスマホでこのQRを読み取ってもらってください。接続されると自動で対戦が始まります。</p>
+      <p class="note">相手のスマホでこのQRを読み取ってもらってください。接続されると自動でゲーム選択画面になります。</p>
       <div id="join-qr" class="qr"></div>
       <textarea id="join-code" readonly rows="3"></textarea>
       <button id="join-copy">コードをコピー</button>
@@ -62,20 +62,23 @@
       <button class="back">戻る</button>
     </section>
 
-    <!-- ゲーム -->
+    <!-- ロビー(接続後のゲーム選択) -->
+    <section id="screen-lobby" class="screen hidden">
+      <h2>ゲームを選ぶ</h2>
+      <p class="note">接続できました!どちらが選んでも、両方の画面でゲームが始まります。</p>
+      <div id="game-list" class="game-list"></div>
+      <p class="conn-banner status"></p>
+      <button id="btn-disconnect">接続を終了</button>
+    </section>
+
+    <!-- ゲーム(中身は各ゲームが描画) -->
     <section id="screen-game" class="screen hidden">
-      <div id="scorebar">
-        <div id="score-black" class="score"><span class="disc black"></span><b>2</b></div>
-        <div id="turn-label">—</div>
-        <div id="score-white" class="score"><span class="disc white"></span><b>2</b></div>
+      <div class="game-head">
+        <button id="btn-to-lobby" class="small">← ゲーム選択</button>
+        <b id="game-title"></b>
       </div>
-      <div id="you-label"></div>
-      <div id="board" role="grid" aria-label="オセロ盤"></div>
-      <p id="message" class="status" aria-live="polite"></p>
-      <div class="row">
-        <button id="btn-restart">もう一度</button>
-        <button id="btn-leave">終了</button>
-      </div>
+      <p class="conn-banner status"></p>
+      <div id="game-root"></div>
     </section>
   </main>
 
@@ -84,3 +87,4 @@
   <script type="module" src="js/app.js"></script>
 </body>
 </html>
+

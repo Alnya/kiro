@@ -1,4 +1,4 @@
-* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+﻿* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body { margin: 0; height: 100%; }
 body {
   font-family: -apple-system, "Hiragino Sans", "Noto Sans JP", sans-serif;
@@ -30,16 +30,16 @@ textarea {
 .video.active { display: block; }
 
 /* ゲーム */
-#scorebar { display: flex; align-items: center; justify-content: space-between; font-size: 20px; }
+.scorebar { display: flex; align-items: center; justify-content: space-between; font-size: 20px; }
 .score { display: flex; align-items: center; gap: 8px; padding: 4px 10px; border-radius: 8px; }
 .score.active { background: #2e8b57; }
-#turn-label { font-size: 15px; text-align: center; flex: 1; }
-#you-label { text-align: center; color: #b9c9bf; font-size: 14px; }
+.turn-label { font-size: 15px; text-align: center; flex: 1; }
+.you-label { text-align: center; color: #b9c9bf; font-size: 14px; }
 .disc { display: inline-block; width: 22px; height: 22px; border-radius: 50%; }
 .disc.black, .cell .black { background: radial-gradient(circle at 35% 30%, #555, #000); }
 .disc.white, .cell .white { background: radial-gradient(circle at 35% 30%, #fff, #cfcfcf); }
 
-#board {
+.board-8 {
   display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; padding: 2px;
   background: #0b3d24; border-radius: 6px; width: 100%; aspect-ratio: 1; touch-action: manipulation;
 }
@@ -49,3 +49,37 @@ textarea {
 .cell.last { outline: 2px solid #ffd966; outline-offset: -2px; }
 .row { display: flex; gap: 12px; }
 .row button { flex: 1; }
+
+/* ゲーム共通 */
+#game-root { display: flex; flex-direction: column; gap: 12px; }
+.game-head { display: flex; align-items: center; gap: 12px; }
+button.small { font-size: 14px; padding: 8px 12px; }
+.game-list { display: flex; flex-direction: column; gap: 10px; }
+.game-card { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; text-align: left; }
+.game-card b { font-size: 19px; }
+.game-card span { font-size: 13px; color: #b9c9bf; }
+
+/* 四目並べ */
+.disc.red, .c4cell .red { background: radial-gradient(circle at 35% 30%, #ff7b7b, #c62828); }
+.disc.yellow, .c4cell .yellow { background: radial-gradient(circle at 35% 30%, #fff3a0, #e0b400); }
+.board-c4 {
+  display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; padding: 6px;
+  background: #1c4fa3; border-radius: 10px; width: 100%; aspect-ratio: 7 / 6; touch-action: manipulation;
+}
+.c4cell { background: #10306a; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.c4cell .disc-lg { width: 92%; height: 92%; border-radius: 50%; }
+.c4cell.win { box-shadow: 0 0 0 3px #fff; }
+
+/* 反射神経バトル */
+.react-pad {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+  min-height: 52vh; border-radius: 14px; text-align: center; padding: 16px;
+  user-select: none; -webkit-user-select: none; touch-action: manipulation; background: #34495e;
+}
+.react-main { font-size: 34px; font-weight: bold; }
+.react-sub { font-size: 15px; opacity: .85; }
+.react-pad.wait { background: #b3382c; }
+.react-pad.go { background: #2ecc71; color: #06260f; }
+.react-pad.won { background: #2e6fb5; }
+.react-pad.lost { background: #5d4a6b; }
+.react-pad.end { background: #8e6b00; }

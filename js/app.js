@@ -1,12 +1,11 @@
-import { BLACK, WHITE, newGame, applyMove, validMoves, count, flips } from "./othello.js";
+﻿import { games } from "./games/index.js";
 import { Peer } from "./rtc.js";
 
 const $ = (id) => document.getElementById(id);
-const screens = ["menu", "host1", "host2", "join1", "join2", "game"];
+const screens = ["menu", "host1", "host2", "join1", "join2", "lobby", "game"];
 let peer = null;
-let myColor = null;
-let game = null;
-let lastMove = null;
+let role = 0; // 0=作成側(ホスト) 1=参加側
+let current = null; // { id, inst }
 let scanner = null;
 let connected = false;
 
@@ -85,18 +84,18 @@ function closePeer() {
 function onPeerState(state) {
   if (state === "open" && !connected) {
     connected = true;
-    startGame();
+    startLobby();
   } else if ((state === "closed" || state === "disconnected" || state === "failed") && connected) {
-    setMessage("相手との接続が切れました。");
+    setBanner("相手との接続が切れました。");
   } else if (state === "failed" && !connected) {
-    const s = myColor === BLACK ? $("host-status") : $("join-status");
+    const s = role === 0 ? $("host-status") : $("join-status");
     s.textContent = "接続に失敗しました。同じWi-Fiか確認して最初からやり直してください。";
   }
 }
 
 // ホスト
 $("btn-host").onclick = async () => {
-  myColor = BLACK;
+  role = 0;
   newPeer();
   show("host1");
   $("host-next").disabled = true;
@@ -125,7 +124,7 @@ async function connectHost() {
 
 // ゲスト
 $("btn-join").onclick = () => {
-  myColor = WHITE;
+  role = 1;
   newPeer();
   $("join-offer").value = "";
   $("join-status").textContent = "";
@@ -160,89 +159,60 @@ $("join-copy").onclick = () => copyText($("join-code"), $("join-copy"));
 // 戻る
 document.querySelectorAll(".back").forEach((b) => (b.onclick = () => { closePeer(); show("menu"); }));
 
-// ---------- ゲーム ----------
-function startGame() {
-  game = newGame();
-  lastMove = null;
-  show("game");
-  $("you-label").textContent = "あなたは " + (myColor === BLACK ? "黒(先手)" : "白(後手)");
-  setMessage("");
-  render();
+// ---------- ロビー / ゲーム切り替え ----------
+function setBanner(t) {
+  document.querySelectorAll(".conn-banner").forEach((el) => (el.textContent = t));
 }
 
-function render() {
-  const board = $("board");
-  const hints = game.turn === myColor && !game.over ? validMoves(game.board, myColor) : [];
-  if (!board.children.length) {
-    for (let y = 0; y < 8; y++) for (let x = 0; x < 8; x++) {
-      const c = document.createElement("div");
-      c.className = "cell"; c.dataset.x = x; c.dataset.y = y;
-      c.setAttribute("role", "gridcell");
-      board.appendChild(c);
+function destroyGame() {
+  if (current) current.inst.destroy();
+  current = null;
+  $("game-root").innerHTML = "";
+}
+
+function startLobby() {
+  destroyGame();
+  setBanner("");
+  const list = $("game-list");
+  if (!list.children.length) {
+    for (const g of games) {
+      const b = document.createElement("button");
+      b.className = "game-card";
+      b.innerHTML = `<b></b><span></span>`;
+      b.firstChild.textContent = g.name;
+      b.lastChild.textContent = g.desc;
+      b.onclick = () => { peer && peer.send({ type: "select", id: g.id }); launch(g.id); };
+      list.appendChild(b);
     }
   }
-  for (const c of board.children) {
-    const x = +c.dataset.x, y = +c.dataset.y, v = game.board[y][x];
-    c.innerHTML = v ? `<div class="disc-lg ${v === BLACK ? "black" : "white"}"></div>` : "";
-    c.classList.toggle("hint", hints.some(([hx, hy]) => hx === x && hy === y));
-    c.classList.toggle("last", !!lastMove && lastMove[0] === x && lastMove[1] === y);
-  }
-  const n = count(game.board);
-  document.querySelector("#score-black b").textContent = n.black;
-  document.querySelector("#score-white b").textContent = n.white;
-  $("score-black").classList.toggle("active", !game.over && game.turn === BLACK);
-  $("score-white").classList.toggle("active", !game.over && game.turn === WHITE);
-  if (game.over) {
-    $("turn-label").textContent = n.black === n.white ? "引き分け" :
-      ((n.black > n.white ? BLACK : WHITE) === myColor ? "あなたの勝ち!" : "あなたの負け");
-  } else {
-    $("turn-label").textContent = game.turn === myColor ? "あなたの番" : "相手の番";
-  }
+  show("lobby");
 }
 
-function setMessage(t) { $("message").textContent = t; }
-
-function play(x, y, byMe) {
-  const r = applyMove(game, x, y);
-  if (!r) return false;
-  lastMove = [x, y];
-  if (r.passed) setMessage(byMe ? "相手は置ける場所がないのでパスです。" : "あなたは置ける場所がないのでパスです。");
-  else setMessage("");
-  render();
-  return true;
+function launch(id) {
+  const def = games.find((g) => g.id === id);
+  if (!def) return;
+  destroyGame();
+  show("game");
+  $("game-title").textContent = def.name;
+  current = {
+    id,
+    inst: def.create({
+      root: $("game-root"),
+      role,
+      send: (data) => peer && peer.send({ type: "game", id, data }),
+    }),
+  };
 }
-
-$("board").addEventListener("click", (e) => {
-  const c = e.target.closest(".cell");
-  if (!c || !game || game.over || game.turn !== myColor) return;
-  const x = +c.dataset.x, y = +c.dataset.y;
-  if (!flips(game.board, x, y, myColor).length) return;
-  if (play(x, y, true)) peer.send({ type: "move", x, y });
-});
 
 function onMessage(msg) {
-  if (!game || !msg) return;
-  if (msg.type === "move") {
-    const { x, y } = msg;
-    if (Number.isInteger(x) && Number.isInteger(y) && game.turn !== myColor) play(x, y, false);
-  } else if (msg.type === "restart") {
-    startGame();
-    setMessage("相手がゲームを再開しました。");
-  } else if (msg.type === "leave") {
-    setMessage("相手が退出しました。");
-  }
+  if (!msg) return;
+  if (msg.type === "select") launch(msg.id);
+  else if (msg.type === "lobby") startLobby();
+  else if (msg.type === "game" && current && current.id === msg.id) current.inst.onMessage(msg.data);
 }
 
-$("btn-restart").onclick = () => {
-  if (!peer) return;
-  peer.send({ type: "restart" });
-  startGame();
-};
-$("btn-leave").onclick = () => {
-  if (peer) peer.send({ type: "leave" });
-  closePeer();
-  game = null;
-  show("menu");
-};
+$("btn-to-lobby").onclick = () => { peer && peer.send({ type: "lobby" }); startLobby(); };
+$("btn-disconnect").onclick = () => { closePeer(); destroyGame(); show("menu"); };
 
 show("menu");
+

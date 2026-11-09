@@ -1,0 +1,51 @@
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; height: 100%; }
+body {
+  font-family: -apple-system, "Hiragino Sans", "Noto Sans JP", sans-serif;
+  background: #1b2a22; color: #f2f2f2;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+main { max-width: 480px; margin: 0 auto; padding: 16px; }
+h1, h2 { text-align: center; margin: 8px 0 12px; }
+.hidden { display: none !important; }
+.screen { display: flex; flex-direction: column; gap: 12px; }
+.note { color: #b9c9bf; font-size: 14px; line-height: 1.5; margin: 0; }
+.status { min-height: 1.4em; text-align: center; margin: 0; color: #ffd966; }
+
+button {
+  font-size: 17px; padding: 14px; border-radius: 10px; border: 1px solid #4b6356;
+  background: #2b4034; color: inherit;
+}
+button.primary { background: #2e8b57; border-color: #2e8b57; font-weight: bold; }
+button:disabled { opacity: .45; }
+
+textarea {
+  width: 100%; font-size: 14px; font-family: monospace; padding: 8px; border-radius: 8px;
+  border: 1px solid #4b6356; background: #0f1a14; color: #f2f2f2; resize: none;
+}
+.qr { background: #fff; padding: 8px; border-radius: 10px; min-height: 120px; color: #333;
+      display: flex; align-items: center; justify-content: center; }
+.qr svg { width: 100%; height: auto; max-width: 360px; display: block; }
+.video { width: 100%; border-radius: 10px; background: #000; display: none; }
+.video.active { display: block; }
+
+/* ゲーム */
+#scorebar { display: flex; align-items: center; justify-content: space-between; font-size: 20px; }
+.score { display: flex; align-items: center; gap: 8px; padding: 4px 10px; border-radius: 8px; }
+.score.active { background: #2e8b57; }
+#turn-label { font-size: 15px; text-align: center; flex: 1; }
+#you-label { text-align: center; color: #b9c9bf; font-size: 14px; }
+.disc { display: inline-block; width: 22px; height: 22px; border-radius: 50%; }
+.disc.black, .cell .black { background: radial-gradient(circle at 35% 30%, #555, #000); }
+.disc.white, .cell .white { background: radial-gradient(circle at 35% 30%, #fff, #cfcfcf); }
+
+#board {
+  display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; padding: 2px;
+  background: #0b3d24; border-radius: 6px; width: 100%; aspect-ratio: 1; touch-action: manipulation;
+}
+.cell { background: #1f7a47; display: flex; align-items: center; justify-content: center; position: relative; }
+.cell .disc-lg { width: 82%; height: 82%; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,.5); }
+.cell.hint::after { content: ""; width: 24%; height: 24%; border-radius: 50%; background: rgba(255,255,255,.35); }
+.cell.last { outline: 2px solid #ffd966; outline-offset: -2px; }
+.row { display: flex; gap: 12px; }
+.row button { flex: 1; }

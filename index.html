@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>オセロ対戦(QR接続)</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <!-- メニュー -->
+    <section id="screen-menu" class="screen">
+      <h1>オセロ対戦</h1>
+      <p class="note">同じWi-Fiのスマホ同士で対戦できます。サーバー不要、QRコードで接続します。</p>
+      <button id="btn-host" class="primary">対戦を作成(先手・黒)</button>
+      <button id="btn-join">対戦に参加(後手・白)</button>
+    </section>
+
+    <!-- ホスト: 手順1 招待コード表示 -->
+    <section id="screen-host1" class="screen hidden">
+      <h2>① 招待コード</h2>
+      <p class="note">相手のスマホでこのQRを読み取ってもらってください。</p>
+      <div id="host-qr" class="qr">作成中…</div>
+      <textarea id="host-code" readonly rows="3"></textarea>
+      <button id="host-copy">コードをコピー</button>
+      <button id="host-next" class="primary" disabled>② 相手の返信を読み取る</button>
+      <button class="back">戻る</button>
+    </section>
+
+    <!-- ホスト: 手順2 返信コード入力 -->
+    <section id="screen-host2" class="screen hidden">
+      <h2>② 返信コード</h2>
+      <p class="note">相手の画面に表示された返信QRを読み取るか、コードを貼り付けてください。</p>
+      <video id="host-video" class="video" playsinline muted></video>
+      <button id="host-scan">カメラで読み取る</button>
+      <textarea id="host-answer" rows="3" placeholder="返信コードを貼り付け"></textarea>
+      <button id="host-connect" class="primary">接続する</button>
+      <p id="host-status" class="status"></p>
+      <button class="back">戻る</button>
+    </section>
+
+    <!-- ゲスト: 手順1 招待コード入力 -->
+    <section id="screen-join1" class="screen hidden">
+      <h2>① 招待コードを読み取る</h2>
+      <p class="note">相手の画面に表示された招待QRを読み取るか、コードを貼り付けてください。</p>
+      <video id="join-video" class="video" playsinline muted></video>
+      <button id="join-scan">カメラで読み取る</button>
+      <textarea id="join-offer" rows="3" placeholder="招待コードを貼り付け"></textarea>
+      <button id="join-next" class="primary">返信コードを作成</button>
+      <p id="join-status" class="status"></p>
+      <button class="back">戻る</button>
+    </section>
+
+    <!-- ゲスト: 手順2 返信コード表示 -->
+    <section id="screen-join2" class="screen hidden">
+      <h2>② 返信コード</h2>
+      <p class="note">相手のスマホでこのQRを読み取ってもらってください。接続されると自動で対戦が始まります。</p>
+      <div id="join-qr" class="qr"></div>
+      <textarea id="join-code" readonly rows="3"></textarea>
+      <button id="join-copy">コードをコピー</button>
+      <p id="join-wait" class="status">相手の接続を待っています…</p>
+      <button class="back">戻る</button>
+    </section>
+
+    <!-- ゲーム -->
+    <section id="screen-game" class="screen hidden">
+      <div id="scorebar">
+        <div id="score-black" class="score"><span class="disc black"></span><b>2</b></div>
+        <div id="turn-label">—</div>
+        <div id="score-white" class="score"><span class="disc white"></span><b>2</b></div>
+      </div>
+      <div id="you-label"></div>
+      <div id="board" role="grid" aria-label="オセロ盤"></div>
+      <p id="message" class="status" aria-live="polite"></p>
+      <div class="row">
+        <button id="btn-restart">もう一度</button>
+        <button id="btn-leave">終了</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="vendor/qrcode.js"></script>
+  <script src="vendor/jsQR.js"></script>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

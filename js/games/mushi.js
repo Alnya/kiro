@@ -10,7 +10,7 @@ const GAUGE_LIMIT_MS = 5000;
 const RESULT_MS = 3200;
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
-function create({ root, role, send }) {
+function create({ root, role, send, names = { opp: "相手" } }) {
   const me = role, opp = 1 - role;
   let phase;          // build | waiting | choose | locked | gauge | gaugeWait | result | over
   let deck;           // 自分の編成 {bug, slots}
@@ -95,13 +95,13 @@ function create({ root, role, send }) {
       ...HANDS.filter((h) => f.atkDown[h] > 0).map((h) => `<span class="chip">${HAND_ICON[h]}攻撃ダウン</span>`),
     ].join("");
     return `<div class="mk-fighter${mine ? " mine" : ""}" style="--hue:${f.bug.hue}">
-      <div class="mk-fname"><b>${label}</b> ${esc(f.bug.name)} <small>つよさ${f.bug.str}</small></div>
+      <div class="mk-fname"><b>${esc(label)}</b> ${esc(f.bug.name)} <small>つよさ${f.bug.str}</small></div>
       <div class="mk-hp"><div class="mk-hp-fill${pct <= 30 ? " low" : ""}" style="width:${pct}%"></div><span>${f.hp} / ${f.maxHp}</span></div>
       <div class="mk-chips">${chips}</div></div>`;
   };
 
   function eventText(e) {
-    const nm = (i) => (i === me ? "あなた" : "相手");
+    const nm = (i) => (i === me ? "あなた" : names.opp);
     switch (e.t) {
       case "aiko": return `あいこ!${nm(e.who)}に${e.dmg}ダメージ`;
       case "aikoBlock": return `${nm(e.who)}はあいこダメージを防いだ!`;
@@ -120,7 +120,7 @@ function create({ root, role, send }) {
   }
 
   function renderBattle() {
-    let h = `<div class="mk-field">${hpBar(F[opp], "相手", false)}<div class="mk-vs">VS</div>${hpBar(F[me], "あなた", true)}</div>`;
+    let h = `<div class="mk-field">${hpBar(F[opp], names.opp, false)}<div class="mk-vs">VS</div>${hpBar(F[me], "あなた", true)}</div>`;
     h += `<div class="mk-log" aria-live="polite">${lastLog.map((l) => `<div>${esc(l)}</div>`).join("") || "<div>じゃんけんで勝った方が攻撃!</div>"}</div>`;
     if (phase === "choose" || phase === "locked") {
       const f = F[me];
@@ -265,6 +265,7 @@ function create({ root, role, send }) {
         resetAll("相手が編成からやり直しました。");
       }
     },
+    onNames() { if (phase !== "gauge") render(); },
     destroy() { destroyed = true; clearTimeout(timer); cancelAnimationFrame(raf); },
   };
 }

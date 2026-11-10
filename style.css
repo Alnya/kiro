@@ -433,3 +433,16 @@ body.vs-playing { overflow: hidden; }
 .dl-modes { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
 .dl-modes button { min-width: 200px; }
 .dl-ready { color: #9fe0a8; }
+
+/* ===== 名前・再接続 ===== */
+.name-field { display: flex; flex-direction: column; gap: 4px; font-size: 14px; color: #b9c9bf; }
+.name-input { font-size: 17px; padding: 10px 12px; border-radius: 8px; border: 1px solid #4b6356; background: #0f1a14; color: #f2f2f2; font-family: inherit; }
+.peer-line { margin: 0; text-align: center; font-weight: bold; color: #9fe0a8; }
+.game-vs { margin-left: auto; font-size: 14px; color: #b9c9bf; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 40vw; }
+.rc { position: fixed; inset: 0; z-index: 3000; display: flex; align-items: flex-start; justify-content: center; overflow-y: auto; background: rgba(0, 0, 0, .78); padding: calc(16px + env(safe-area-inset-top)) 12px calc(16px + env(safe-area-inset-bottom)); }
+.rc.hidden { display: none; }
+.rc-box { width: min(440px, 100%); display: flex; flex-direction: column; gap: 10px; background: #15231b; border: 1px solid #4b6356; border-radius: 14px; padding: 18px; color: #f2f2f2; font-family: system-ui, sans-serif; margin: auto 0; }
+.rc-box h2 { margin: 0; }
+.rc-step { display: flex; flex-direction: column; gap: 10px; }
+.rc-step.hidden, #rc-greply.hidden, #rc-start.hidden { display: none; }
+#rc-greply { display: flex; flex-direction: column; gap: 10px; }

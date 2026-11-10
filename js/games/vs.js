@@ -1,4 +1,4 @@
-﻿// 兄弟ダッシュ!ビッグスターバトル(マリオVSルイージ方式の2人対戦アクション)
+// 兄弟ダッシュ!ビッグスターバトル(マリオVSルイージ方式の2人対戦アクション)
 // 通信はロックステップ: 毎フレームの入力だけを交換し、両端末が同じ決定論シミュレーションを回す。
 import { Sim } from "../vs/sim.js";
 import { STAGE_IDS } from "../vs/stages.js";
@@ -49,7 +49,9 @@ class Sfx {
   }
 }
 
-function create({ root, role, send }) {
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+function create({ root, role, send, names = { me: "あなた", opp: "相手" } }) {
   const me = role, opp = 1 - role;
   let cfg = { ...DEFAULT_CFG };
   let destroyed = false;
@@ -248,7 +250,7 @@ function create({ root, role, send }) {
       if (p.form === "fire") tags.push("ファイア"); else if (p.form === "big") tags.push("おおきい");
       const near = !sim.over && p.stars === cfg.stars - 1;
       const html =
-        `<div class="vs-name" style="color:${HERO[i].main}">${HERO[i].name}${i === me ? "(あなた)" : ""} <small>${r.wins[i]}勝</small></div>` +
+        `<div class="vs-name" style="color:${HERO[i].main}">${HERO[i].name}(${esc(i === me ? names.me : names.opp)}) <small>${r.wins[i]}勝</small></div>` +
         `<div class="vs-stars${near ? " pulse" : ""}">★ <b>${p.stars}</b>/${cfg.stars}</div>` +
         `<div class="vs-sub">♥${p.lives < 0 ? "∞" : p.lives}　🪙${p.coins}/8</div>` +
         `<div class="vs-tags">${tags.join("・")}</div>`;

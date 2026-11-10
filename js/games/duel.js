@@ -21,9 +21,10 @@ function defaultQuality() {
   if (touch && (navigator.deviceMemory || 4) <= 2) return "low";
   return "standard";
 }
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const fmt = (t) => `${Math.floor(t / 60)}分${Math.round(t % 60)}秒`;
 
-function create({ root, role, send }) {
+function create({ root, role, send, names = { me: "あなた", opp: "相手" } }) {
   const me = role === 1 ? 1 : 0;
   let game = null, ov = null, quality = defaultQuality();
   let rival = null;
@@ -33,18 +34,18 @@ function create({ root, role, send }) {
   let record = JSON.parse(localStorage.getItem("duelPvpRecord") || '{"w":0,"l":0,"d":0}');
 
   function rivalText() {
-    if (remoteReady && !pvpGame) return "相手が対人戦の準備をして待っています";
+    if (remoteReady && !pvpGame) return `${names.opp}が対人戦の準備をして待っています`;
     if (!rival) return "";
-    if (rival.done) return `相棒: 討伐成功!(${fmt(rival.time)}・パリィ${rival.parries}回)`;
-    if (rival.state === "lose") return "相棒: 倒れた…";
-    return `相棒: ボス${rival.bars > 1 ? "第1形態" : "第2形態"} 残り${Math.round(rival.hp * 100)}%`;
+    if (rival.done) return `${names.opp}: 討伐成功!(${fmt(rival.time)}・パリィ${rival.parries}回)`;
+    if (rival.state === "lose") return `${names.opp}: 倒れた…`;
+    return `${names.opp}: ボス${rival.bars > 1 ? "第1形態" : "第2形態"} 残り${Math.round(rival.hp * 100)}%`;
   }
 
   function renderStart(note) {
     if (game || pvpGame) return;
     const pvpStatus = ready
-      ? `<p class="status dl-ready">対人戦の準備OK。${remoteReady ? "まもなく開始…" : "相手が「対人戦」を押すのを待っています…"}</p>`
-      : remoteReady ? '<p class="status dl-ready">相手が対人戦の準備をして待っています!</p>' : "";
+      ? `<p class="status dl-ready">対人戦の準備OK。${remoteReady ? "まもなく開始…" : `${esc(names.opp)}が「対人戦」を押すのを待っています…`}</p>`
+      : remoteReady ? `<p class="status dl-ready">${esc(names.opp)}が対人戦の準備をして待っています!</p>` : "";
     root.innerHTML = `
       <div class="dl-start">
         <p class="note">SEKIROライクな<b>3Dの一騎討ち</b>。相手の刃に合わせて防御するとパリィで弾き、体幹を崩して致命の一撃を狙おう。</p>
@@ -140,7 +141,7 @@ function create({ root, role, send }) {
       if (ov !== host) return;
       try {
         const g = new PvpGame(ov, {
-          quality, me,
+          quality, me, names,
           sendNet: (m) => send(m),
           onExit: () => { send({ t: "pvpQuit" }); stopPvp(); },
           onEnd: (r) => {
@@ -193,6 +194,11 @@ function create({ root, role, send }) {
         default: break;
       }
       if (game) game.setRival(rivalText());
+    },
+    onNames() {
+      if (pvpGame && pvpGame.setNames) pvpGame.setNames();
+      if (game) game.setRival(rivalText());
+      renderStart();
     },
     destroy() {
       if (pvpGame && !pvpGame.building) send({ t: "pvpQuit" });

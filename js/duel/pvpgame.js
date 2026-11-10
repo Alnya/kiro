@@ -27,10 +27,10 @@ export class PvpGame extends DuelGame {
   buildDom() {
     super.buildDom();
     const r = this.root, me = this.opts.me | 0, op = 1 - me;
-    r.querySelector(".dl-bname").textContent = `相手 ・ ${PAL[op].name}の剣士`;
+    this.el = this.el || {};
     const pl = r.querySelector(".dl-pl");
     const nm = document.createElement("div");
-    nm.className = "dl-pname"; nm.textContent = `あなた ・ ${PAL[me].name}の剣士`;
+    nm.className = "dl-pname";
     pl.prepend(nm);
     const pm = document.createElement("div");
     pm.className = "dl-marks dl-pmarks"; pm.innerHTML = "<b></b><b></b>";
@@ -42,6 +42,15 @@ export class PvpGame extends DuelGame {
     pause.textContent = "✕"; pause.setAttribute("aria-label", "対戦をやめる");
     this.el.pmarks = pm;
     this.el.bpost = r.querySelector(".dl-bpost");
+    this.el.pname = nm; this.el.bname = r.querySelector(".dl-bname");
+    this.setNames();
+  }
+
+  // 名前の表示(textContent なので HTML として解釈されない)
+  setNames() {
+    const me = this.opts.me | 0, op = 1 - me, n = this.opts.names || { me: "あなた", opp: "相手" };
+    this.el.bname.textContent = `${n.opp} ・ ${PAL[op].name}の剣士`;
+    this.el.pname.textContent = `${n.me} ・ ${PAL[me].name}の剣士`;
   }
 
   // ---------- キャラクター(二人とも剣士。色で見分ける) ----------

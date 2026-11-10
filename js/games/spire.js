@@ -1,4 +1,4 @@
-﻿// デッキタワー(協力): 2人で挑む協力デッキ構築ローグライク。
+// デッキタワー(協力): 2人で挑む協力デッキ構築ローグライク。
 // 通信: ホストだけがエンジンを実行し、結果の状態スナップショット(ステップ列)を両者に配る。
 import { Game, FLOORS, SHOP_REMOVE } from "../spire/engine.js";
 import { CARDS, CLASSES, ENEMIES, RELICS, POTIONS, EVENTS, statusNames, statusDesc, DEBUFFS, cardText, cardCost } from "../spire/data.js";
@@ -7,7 +7,7 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&l
 const NODE_IC = { M: "⚔️", E: "👹", R: "🔥", S: "🛒", T: "💎", Q: "❓", V: "📜", B: "👑" };
 const PCOL = ["#ff7a6b", "#6bd0ff"];
 
-function create({ root, role, send }) {
+function create({ root, role, send, names: pn = { rawMe: "", rawOpp: "", opp: "相棒" } }) {
   const me = role;
   let destroyed = false;
   // ---- ロビー用 ----
@@ -32,7 +32,7 @@ function create({ root, role, send }) {
       <div class="sp-lobby">
         <p class="note">2人で塔を登る協力デッキ構築ローグライク。同じ戦闘を同時にプレイし、デッキ・HP・ゴールドは別々。マップは2人で投票、倒れても戦闘後にHP1で復活!</p>
         <div class="sp-cls-list">${["knight", "mage", "ranger"].map(classBtn).join("")}</div>
-        <p class="status">相棒: ${mate}</p>
+        <p class="status">${esc(pn.rawOpp || "相棒")}: ${mate}</p>
         <button class="primary sp-ready"${myCls ? "" : " disabled"}>${myReady ? "準備OKを取り消す" : "準備OK!"}</button>
         ${me === 0 ? `<button class="primary sp-start"${myReady && theirReady ? "" : " disabled"}>ゲーム開始</button>` : `<p class="status">${myReady && theirReady ? "ホストの開始を待っています…" : ""}</p>`}
         <details class="vs-help"><summary>遊び方</summary>
@@ -53,7 +53,8 @@ function create({ root, role, send }) {
     if (!(myReady && theirReady)) return;
     const classes = me === 0 ? [myCls, theirCls] : [theirCls, myCls];
     const same = classes[0] === classes[1];
-    const names = classes.map((c, i) => `${CLASSES[c].name}${same ? (i === 0 ? "A" : "B") : ""}`);
+    const typed = me === 0 ? [pn.rawMe, pn.rawOpp] : [pn.rawOpp, pn.rawMe];
+    const names = classes.map((c, i) => typed[i] && typed[0] !== typed[1] ? typed[i] : `${CLASSES[c].name}${same ? (i === 0 ? "A" : "B") : ""}`);
     game = new Game({ seed: (Math.random() * 4294967296) >>> 0, classes, names });
     openOverlay();
     const first = [{ s: JSON.parse(JSON.stringify(game.s)), ev: [], d: 0 }];

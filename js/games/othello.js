@@ -1,6 +1,6 @@
 import { BLACK, WHITE, newGame, applyMove, validMoves, count, flips } from "../othello.js";
 
-function create({ root, role, send }) {
+function create({ root, role, send, names = { opp: "相手" } }) {
   const myColor = role === 0 ? BLACK : WHITE;
   let game = newGame();
   let lastMove = null;
@@ -39,8 +39,8 @@ function create({ root, role, send }) {
     $(".s-black").classList.toggle("active", !game.over && game.turn === BLACK);
     $(".s-white").classList.toggle("active", !game.over && game.turn === WHITE);
     $(".turn-label").textContent = game.over
-      ? (n.black === n.white ? "引き分け" : ((n.black > n.white ? BLACK : WHITE) === myColor ? "あなたの勝ち!" : "あなたの負け"))
-      : (game.turn === myColor ? "あなたの番" : "相手の番");
+      ? (n.black === n.white ? "引き分け" : ((n.black > n.white ? BLACK : WHITE) === myColor ? "あなたの勝ち!" : `${names.opp}の勝ち`))
+      : (game.turn === myColor ? "あなたの番" : `${names.opp}の番`);
     $(".status").textContent = message;
   }
 
@@ -48,7 +48,7 @@ function create({ root, role, send }) {
     const r = applyMove(game, x, y);
     if (!r) return false;
     lastMove = [x, y];
-    message = r.passed ? (byMe ? "相手は置ける場所がないのでパスです。" : "あなたは置ける場所がないのでパスです。") : "";
+    message = r.passed ? (byMe ? `${names.opp}は置ける場所がないのでパスです。` : "あなたは置ける場所がないのでパスです。") : "";
     render();
     return true;
   }
@@ -71,8 +71,9 @@ function create({ root, role, send }) {
   return {
     onMessage(m) {
       if (m.t === "move" && Number.isInteger(m.x) && Number.isInteger(m.y) && game.turn !== myColor) play(m.x, m.y, false);
-      else if (m.t === "restart") reset("相手がゲームを再開しました。");
+      else if (m.t === "restart") reset(`${names.opp}がゲームを再開しました。`);
     },
+    onNames() { render(); },
     destroy() {},
   };
 }

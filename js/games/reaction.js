@@ -11,7 +11,7 @@ export function judge(mine, theirs) {
   return a === b ? 0 : a < b ? 1 : -1;
 }
 
-function create({ root, role, send }) {
+function create({ root, role, send, names = { opp: "相手" } }) {
   const isHost = role === 0;
   let scores, round, phase, mine, theirs, greenAt, waitTimer, limitTimer, nextTimer, over;
   let destroyed = false;
@@ -20,7 +20,7 @@ function create({ root, role, send }) {
     <div class="scorebar">
       <div class="score">あなた <b class="sc-me">0</b></div>
       <div class="turn-label">先に${WIN_SCORE}本取った方の勝ち</div>
-      <div class="score">相手 <b class="sc-opp">0</b></div>
+      <div class="score"><span class="nm-opp"></span> <b class="sc-opp">0</b></div>
     </div>
     <div class="react-pad" role="button" tabindex="0">
       <div class="react-main">準備中…</div>
@@ -28,6 +28,8 @@ function create({ root, role, send }) {
     </div>
     <div class="row"><button class="restart">もう一度</button></div>`;
   const $ = (s) => root.querySelector(s);
+  const showNames = () => { $(".nm-opp").textContent = names.opp; };
+  showNames();
   const pad = $(".react-pad");
 
   function setPad(cls, main, sub = "") {
@@ -119,6 +121,7 @@ function create({ root, role, send }) {
         send({ t: "reset" }); reset();
       }
     },
+    onNames: showNames,
     destroy() { destroyed = true; clearTimers(); },
   };
 }

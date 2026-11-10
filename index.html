@@ -12,6 +12,8 @@
     <section id="screen-menu" class="screen">
       <h1>ミニゲーム対戦</h1>
       <p class="note">同じWi-Fiのスマホ同士で対戦できます。サーバー不要、QRコードで接続します。</p>
+      <label class="name-field">あなたの名前<input id="my-name" class="name-input" maxlength="12" placeholder="相手の画面に表示されます" autocomplete="nickname" enterkeyhint="done"></label>
+      <p id="menu-msg" class="status"></p>
       <button id="btn-host" class="primary">対戦を作成(招待QRを出す側)</button>
       <button id="btn-join">対戦に参加(QRを読み取る側)</button>
     </section>
@@ -66,6 +68,8 @@
     <section id="screen-lobby" class="screen hidden">
       <h2>ゲームを選ぶ</h2>
       <p class="note">接続できました!どちらが選んでも、両方の画面でゲームが始まります。</p>
+      <p id="lobby-peer" class="peer-line"></p>
+      <label class="name-field">あなたの名前<input id="lobby-name" class="name-input" maxlength="12" placeholder="相手の画面に表示されます" autocomplete="nickname" enterkeyhint="done"></label>
       <div id="game-list" class="game-list"></div>
       <p class="conn-banner status"></p>
       <button id="btn-disconnect">接続を終了</button>
@@ -76,11 +80,49 @@
       <div class="game-head">
         <button id="btn-to-lobby" class="small">← ゲーム選択</button>
         <b id="game-title"></b>
+        <span id="game-vs" class="game-vs"></span>
       </div>
       <p class="conn-banner status"></p>
       <div id="game-root"></div>
     </section>
   </main>
+
+  <!-- 接続が切れたときの再接続(ゲームの上に重ねて表示。ゲームの状態はそのまま残る) -->
+  <div id="reconnect" class="rc hidden" role="dialog" aria-modal="true" aria-labelledby="rc-title">
+    <div class="rc-box">
+      <h2 id="rc-title">接続が切れました</h2>
+      <p id="rc-status" class="note"></p>
+      <button id="rc-start" class="primary">つなぎ直す</button>
+      <!-- 作成側: 新しい招待QR → 相手の返信を読む -->
+      <div id="rc-host" class="rc-step hidden">
+        <p class="note">① 相手にこの招待QRを読み取ってもらってください。</p>
+        <div id="rc-hqr" class="qr">作成中…</div>
+        <textarea id="rc-hcode" readonly rows="2" aria-label="招待コード"></textarea>
+        <button id="rc-hcopy">コードをコピー</button>
+        <p class="note">② 相手の画面に出た返信QRを読み取るか、返信コードを貼り付けてください。</p>
+        <video id="rc-hvideo" class="video" playsinline muted></video>
+        <button id="rc-hscan">カメラで読み取る</button>
+        <textarea id="rc-answer" rows="2" placeholder="返信コードを貼り付け" aria-label="返信コード"></textarea>
+        <button id="rc-connect" class="primary">接続する</button>
+      </div>
+      <!-- 参加側: 相手の招待QRを読む → 返信QRを見せる -->
+      <div id="rc-guest" class="rc-step hidden">
+        <p class="note">① 相手の画面に出た招待QRを読み取るか、招待コードを貼り付けてください。</p>
+        <video id="rc-gvideo" class="video" playsinline muted></video>
+        <button id="rc-gscan">カメラで読み取る</button>
+        <textarea id="rc-offer" rows="2" placeholder="招待コードを貼り付け" aria-label="招待コード"></textarea>
+        <button id="rc-reply" class="primary">返信コードを作成</button>
+        <div id="rc-greply" class="hidden">
+          <p class="note">② 相手にこの返信QRを読み取ってもらってください。つながると自動でゲームに戻ります。</p>
+          <div id="rc-gqr" class="qr"></div>
+          <textarea id="rc-gcode" readonly rows="2" aria-label="返信コード"></textarea>
+          <button id="rc-gcopy">コードをコピー</button>
+        </div>
+      </div>
+      <p id="rc-msg" class="status" aria-live="polite"></p>
+      <button id="rc-quit">あきらめて最初の画面に戻る</button>
+    </div>
+  </div>
 
   <script src="vendor/qrcode.js"></script>
   <script src="vendor/jsQR.js"></script>

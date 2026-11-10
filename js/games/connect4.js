@@ -20,7 +20,7 @@ export function findWin(b) {
   return null;
 }
 
-function create({ root, role, send }) {
+function create({ root, role, send, names = { opp: "相手" } }) {
   const me = role + 1; // 1=赤(先手) 2=黄
   let board, turn, win, over, round = 0, message = "";
 
@@ -61,8 +61,8 @@ function create({ root, role, send }) {
     $(".s1").classList.toggle("active", !over && turn === 1);
     $(".s2").classList.toggle("active", !over && turn === 2);
     $(".turn-label").textContent = over
-      ? (win ? (board[win[0][0]][win[0][1]] === me ? "あなたの勝ち!" : "あなたの負け") : "引き分け")
-      : (turn === me ? "あなたの番" : "相手の番");
+      ? (win ? (board[win[0][0]][win[0][1]] === me ? "あなたの勝ち!" : `${names.opp}の勝ち`) : "引き分け")
+      : (turn === me ? "あなたの番" : `${names.opp}の番`);
     $(".status").textContent = message;
   }
 
@@ -94,8 +94,9 @@ function create({ root, role, send }) {
   return {
     onMessage(m) {
       if (m.t === "drop" && Number.isInteger(m.c)) drop(m.c, me === 1 ? 2 : 1);
-      else if (m.t === "restart") reset("相手がゲームを再開しました。");
+      else if (m.t === "restart") reset(`${names.opp}がゲームを再開しました。`);
     },
+    onNames() { render(); },
     destroy() {},
   };
 }

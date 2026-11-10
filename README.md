@@ -12,6 +12,16 @@ WebRTC DataChannel で端末同士が直接通信し、接続情報はQRコー�
 
 カメラが使えない場合は、表示されたコードをコピーしてLINE等で送り、貼り付けても接続できます。
 
+## 名前
+最初の画面(またはゲーム選択画面)で名前を入れると端末に保存され、接続すると相手の画面にも表示されます(ゲーム選択画面・ゲームの見出し・各ゲームの「相手」の表示)。12文字まで。接続中に変えると相手の画面もすぐ変わります。
+
+## 接続が切れたとき(再接続)
+- Wi-Fiが一瞬切れた程度なら、自動で復帰するのを待ちます(「通信が途切れています」と表示)。
+- 完全に切れた場合は「つなぎ直す」を押し、最初と同じ役割(作成側が招待QR → 参加側が返信QR)で接続情報を交換し直します。**遊んでいたゲームはそのまま続きから再開**します。切れている間に打った手や入力も、つなぎ直したあとで相手に届きます。
+- しくみ: アプリが送るメッセージすべてに通し番号を付け、相手から受信確認が来るまで保管します。つなぎ直したら「どこまで受け取ったか」を伝え合い、届いていない分だけ送り直します(`js/app.js` のセッション層)。ゲーム側は再接続を意識しなくてよい作りです。
+- サーバーがないため、完全に切れたあとの接続情報の交換(QRの読み取り)だけは省けません。
+- 片方がページを開き直した場合は続きから再開できないので、新しい接続としてゲーム選択に戻ります。「接続を終了」を押すと相手にも伝わります。
+
 ## 公開方法
 リポジトリのルートをそのまま GitHub Pages(Settings → Pages → Deploy from a branch)で公開してください。
 ローカル確認: `npx serve .` や `python -m http.server`(localhost はカメラ可。LAN内IPはHTTPSが必要)。
@@ -26,7 +36,7 @@ WebRTC DataChannel で端末同士が直接通信し、接続情報はQRコー�
 - `tests/` — `vs-sim` / `spire-rules` / `spire-cards` / `spire-bot` / `duel-combat` / `duel-pvp` の各 `.test.mjs`(`node tests/<名前>.test.mjs`)
 - `js/games/` — 各ゲーム(`othello.js` `connect4.js` `reaction.js` `mushi.js` `vs.js` `spire.js` `duel.js`)と一覧 `index.js`
 - `js/rtc.js` — WebRTC と接続コードの圧縮/展開
-- `js/app.js` — UI・QR・対戦制御
+- `js/app.js` — UI・QR・対戦制御・名前・再接続(セッション層)
 - `vendor/` — qrcode-generator(MIT)、jsQR(Apache-2.0)、Three.js r160(MIT、`vendor/three/`。CDNは使わない)
 
 ## 注意
@@ -35,7 +45,7 @@ WebRTC DataChannel で端末同士が直接通信し、接続情報はQRコー�
 - iOS Safari は 16.4 以降を推奨(接続コードの圧縮に使用)。
 
 ## ゲームを追加するには
-js/games/<name>.js に `{ id, name, desc, create({root, role, send}) }` を default export し、js/games/index.js の配列に追加します。create は `{ onMessage(data), destroy() }` を返します。role は 0=作成側 / 1=参加側、send(data) で相手の onMessage にデータが届きます。
+js/games/<name>.js に `{ id, name, desc, create({root, role, send, names}) }` を default export し、js/games/index.js の配列に追加します。create は `{ onMessage(data), destroy() }` を返します。role は 0=作成側 / 1=参加側、send(data) で相手の onMessage にデータが届きます(切断・再接続をまたいでも、順番どおり1回ずつ届きます)。names.me / names.opp で自分と相手の名前を読めます(HTMLに入れるときはエスケープすること)。名前が変わると、あれば onNames() が呼ばれます。
 
 ## 甲虫じゃんけんバトルのルール
 カードバトル系アーケードゲーム(甲虫王者ムシキング)のルールを、公開情報を元に再現しています(名称・カード・技名はすべてオリジナル)。

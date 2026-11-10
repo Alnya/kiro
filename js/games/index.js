@@ -9,5 +9,6 @@ import reaction from "./reaction.js";
 import mushi from "./mushi.js";
 import vs from "./vs.js";
 import spire from "./spire.js";
+import duel from "./duel.js";
 
-export const games = [othello, connect4, reaction, mushi, vs, spire];
+export const games = [othello, connect4, reaction, mushi, vs, spire, duel];

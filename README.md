@@ -1,6 +1,6 @@
 ﻿# ミニゲーム対戦(QR接続・サーバー不要)
 
-GitHub Pages などの静的ホスティングだけで動く、スマホ同士の2人対戦ミニゲーム集です(オセロ / 四目並べ / 反射神経バトル / 甲虫じゃんけんバトル / ビッグスターバトル / デッキタワー(協力))。
+GitHub Pages などの静的ホスティングだけで動く、スマホ同士の2人対戦ミニゲーム集です(オセロ / 四目並べ / 反射神経バトル / 甲虫じゃんけんバトル / ビッグスターバトル / デッキタワー(協力) / 鬼面の武将 一騎討ち(3D))。
 WebRTC DataChannel で端末同士が直接通信し、接続情報はQRコード(またはコピー&ペースト)で交換します。
 
 ## 遊び方
@@ -21,21 +21,21 @@ WebRTC DataChannel で端末同士が直接通信し、接続情報はQRコー�
 - `js/othello.js` — オセロのルール(純粋ロジック)
 - `js/mushi.js` — 甲虫じゃんけんバトルのルール(純粋ロジック・乱数なし)
 - `js/vs/` — ビッグスターバトル(`sim.js` 決定論シミュレーション / `stages.js` / `render.js` / `input.js`)
+- `js/duel/` — 鬼面の武将 一騎討ち(`combat.js` 戦闘ロジック / `rig.js` `models.js` `anim.js` キャラ / `world.js` 舞台 / `fx.js` エフェクト / `audio.js` 効果音 / `game.js` 描画・操作・HUD)
 - `js/spire/` — デッキタワー(`data.js` カード・敵・レリック等のデータ / `engine.js` ゲームエンジン)
-- `tests/` — `vs-sim` / `spire-rules` / `spire-cards` / `spire-bot` の各 `.test.mjs`(`node tests/<名前>.test.mjs`)
-- `js/games/` — 各ゲーム(`othello.js` `connect4.js` `reaction.js` `mushi.js` `vs.js` `spire.js`)と一覧 `index.js`
+- `tests/` — `vs-sim` / `spire-rules` / `spire-cards` / `spire-bot` / `duel-combat` の各 `.test.mjs`(`node tests/<名前>.test.mjs`)
+- `js/games/` — 各ゲーム(`othello.js` `connect4.js` `reaction.js` `mushi.js` `vs.js` `spire.js` `duel.js`)と一覧 `index.js`
 - `js/rtc.js` — WebRTC と接続コードの圧縮/展開
 - `js/app.js` — UI・QR・対戦制御
-- `vendor/` — qrcode-generator(MIT)、jsQR(Apache-2.0)
+- `vendor/` — qrcode-generator(MIT)、jsQR(Apache-2.0)、Three.js r160(MIT、`vendor/three/`。CDNは使わない)
 
 ## 注意
 - 接続コード交換後はGoogleのSTUNを補助的に使います。同じWi-Fiでもルーターの「AP分離」が有効だと繋がりません。
 - 一部のネットワーク(厳しいNAT)ではTURNが無いと接続できない場合があります。
 - iOS Safari は 16.4 以降を推奨(接続コードの圧縮に使用)。
 
-a
 ## ゲームを追加するには
-js/games/<name>.js に `{ id, name, desc, create({root, role, send}) }` を default export し、js/games/index.js の配列に追加します。create は `{ onMessage(data), destroy() }` を返します。ole は 0=作成側 / 1=参加側、send(data) で相手の onMessage にデータが届きます。
+js/games/<name>.js に `{ id, name, desc, create({root, role, send}) }` を default export し、js/games/index.js の配列に追加します。create は `{ onMessage(data), destroy() }` を返します。role は 0=作成側 / 1=参加側、send(data) で相手の onMessage にデータが届きます。
 
 ## 甲虫じゃんけんバトルのルール
 カードバトル系アーケードゲーム(甲虫王者ムシキング)のルールを、公開情報を元に再現しています(名称・カード・技名はすべてオリジナル)。
@@ -82,3 +82,22 @@ js/games/<name>.js に `{ id, name, desc, create({root, role, send}) }` を defa
 通信: **ホストだけがゲームエンジンを実行**し、結果の状態を両者に配ります(ゲストは操作を送るだけ)。
 
 簡略化・未実装: 現状はACT1のみ(ボスを倒すとクリア)。エンシェント、ボスレリック、カスタムモード、3〜4人プレイ、画面共有のカーソルは未実装。カード数・敵の種類はオリジナルゲームよりずっと少ない。難易度の数値は推定。
+
+## 鬼面の武将 一騎討ち(3D剣戟アクション)
+Three.js で描画する、ボスとの1対1の剣戟アクションです(SEKIROのような遊び方。キャラ・名前・絵・音はすべてオリジナルで、モデル・テクスチャ・効果音もコードで生成しています)。
+
+ルール:
+- 自分とボスにはそれぞれ **体力** と **体幹** がある。ボスの体幹を満タンにするか体力を0にすると隙ができ、**致命の一撃**を入れられる。ボスを倒すには致命の一撃が2回必要。2回目は後半戦になり、ボスの攻撃が激しくなる。
+- 攻撃に合わせて **ジャストで防御** するとパリィ(弾き)になる。受付はボタンを押してから0.22秒。連打していると0.11秒に短くなる。パリィするとボスの体幹が大きく削れ、反撃のチャンスになる。普通の防御でも攻撃は防げるが、自分の体幹が溜まり、満タンになると崩される。
+- 「危」マークが出る攻撃(突き・足払い・掴み)は防御もパリィもできない。回避でかわす。
+- 回復(瓢箪)は3回まで。一度だけ、その場で回生(復活)できる。
+
+操作:
+- スマホ: 左側のスティックで移動。右側のボタンは 攻撃 / 防御(パリィ) / 回避 / 🍶回復。
+- PC: WASDで移動。攻撃は J・Z・Enter・左クリック、防御は K・X・Shift・右クリック、回避は Space・L・C、回復は E・H、一時停止は Esc。
+
+画質: 「高 / 標準 / 低」を選べる。低ではブルームと影を切る。初期値は端末に合わせて決まり、選んだ設定は端末に保存される。
+
+通信: 2人はそれぞれ自分の端末で同じボスと戦う。相棒の進み具合(ボスの形態と残り体力、倒れたかどうか、討伐タイム、パリィ回数)を画面に表示する。勝敗は付けず、タイムを競う遊び方。3D戦闘は通信の遅延に弱いため、同じ戦闘を2人で同期することはしていない。
+
+注意: 難易度はボットでの試行を元に調整しています。古いスマホでは「低」画質を推奨します。

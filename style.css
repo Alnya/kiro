@@ -423,3 +423,13 @@ body.vs-playing { overflow: hidden; }
 .dl-stats b { font-size: 16px; color: #ecc65a; }
 .dl-death button, .dl-win button, .dl-pbox button { min-width: 220px; font-family: inherit; }
 .dl-pbox { background: #14161f; border: 1px solid #4a4f66; border-radius: 14px; padding: 22px; } .dl-pbox h2 { margin: 0 0 8px; }
+/* 対人戦 */
+.dl-thrust { right: calc(206px + env(safe-area-inset-right)); bottom: calc(126px + env(safe-area-inset-bottom)); width: 60px; height: 60px; font-size: 15px; background: rgba(150, 20, 30, .42); border-color: rgba(255, 120, 120, .7); }
+.dl-thrust small { color: #ff8a8a; font-weight: bold; }
+@media (max-height: 430px) { .dl-thrust { width: 52px; height: 52px; right: calc(176px + env(safe-area-inset-right)); bottom: calc(100px + env(safe-area-inset-bottom)); } }
+.dl-pname { text-align: center; font-size: 12px; letter-spacing: .2em; color: #e9dfc6; }
+.dl-pmarks { margin-top: 2px; }
+.dl-rival.warn { color: #ffb0a0; }
+.dl-modes { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.dl-modes button { min-width: 200px; }
+.dl-ready { color: #9fe0a8; }

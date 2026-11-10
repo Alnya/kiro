@@ -67,6 +67,7 @@ export class DuelAudio {
       case "lose": this.tone(330, 110, 1.6, { type: "triangle", vol: 0.28 }); this.tone(60, 40, 2, { vol: 0.25 }); break;
       case "win": [392, 523, 659, 784].forEach((f, i) => this.tone(f, f, 1.4, { type: "triangle", vol: 0.12, delay: i * 0.22 })); this.tone(98, 98, 2.4, { vol: 0.2 }); break;
       case "kneel": this.tone(120, 60, 0.7, { type: "triangle", vol: 0.2 }); break;
+      case "gong": this.tone(146, 142, 2.4, { type: "triangle", vol: 0.26 }); this.tone(293, 288, 1.6, { vol: 0.08 }); this.tone(73, 72, 2.6, { vol: 0.18 }); this.noise(0.1, { f0: 900, f1: 300, q: 1, vol: 0.15 }); break;
       case "step": this.noise(0.08, { f0: 300, f1: 200, q: 1, vol: 0.05, type: "lowpass" }); break;
       default: break;
     }

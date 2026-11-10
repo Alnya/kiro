@@ -21,7 +21,7 @@ export const QUALITY = {
 };
 
 // ビネット・色収差・粒状感・低HP時の彩度低下
-const PostShader = {
+export const PostShader = {
   uniforms: { tDiffuse: { value: null }, uTime: { value: 0 }, uAb: { value: 0 }, uVig: { value: 0.38 }, uDesat: { value: 0 }, uFlash: { value: 0 }, uRed: { value: 0 } },
   vertexShader: "varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }",
   fragmentShader: `
@@ -109,17 +109,12 @@ export class DuelGame {
     this.camera = new THREE.PerspectiveCamera(56, 1, 0.1, 600);
     this.world = buildWorld(r, this.scene, q);
 
-    // キャラクター
-    this.pl = buildPlayer(new Humanoid(1)); this.scene.add(this.pl.root);
-    this.boss = buildBoss(new Humanoid(1.42)); this.scene.add(this.boss.root);
-    this.plTarget = basePose(); this.bossTarget = basePose();
+    this.buildActors();
 
     // 演出
     this.sparks = new Particles(this.scene, 700, makeGlow(64), true);
     this.dust = new Particles(this.scene, 160, makeGlow(64), false);
     this.rings = new Rings(this.scene, 8);
-    this.trailP = new Trail(this.scene, 24, 0xbfe0ff, 0.9);
-    this.trailB = new Trail(this.scene, 24, 0xff8a60, 0.32);
     this.aura = new Aura(this.scene, 140);
     this.flashLight = new THREE.PointLight(0xffe0b0, 0, 14, 2); this.scene.add(this.flashLight);
     this.perilLight = new THREE.PointLight(0xff2010, 0, 7, 2); this.scene.add(this.perilLight);
@@ -144,6 +139,15 @@ export class DuelGame {
     this.resize();
   }
 
+  // キャラクター(対人戦ではサブクラスが差し替える)
+  buildActors() {
+    this.pl = buildPlayer(new Humanoid(1)); this.scene.add(this.pl.root);
+    this.boss = buildBoss(new Humanoid(1.42)); this.scene.add(this.boss.root);
+    this.plTarget = basePose(); this.bossTarget = basePose();
+    this.trailP = new Trail(this.scene, 24, 0xbfe0ff, 0.9);
+    this.trailB = new Trail(this.scene, 24, 0xff8a60, 0.32);
+  }
+
   resize() {
     const w = this.root.clientWidth || window.innerWidth, h = this.root.clientHeight || window.innerHeight;
     this.renderer.setSize(w, h, false);
@@ -158,7 +162,7 @@ export class DuelGame {
   bindInput() {
     const map = {
       KeyJ: "attack", KeyZ: "attack", Enter: "attack", KeyK: "guard", KeyX: "guard", ShiftLeft: "guard", ShiftRight: "guard",
-      Space: "dodge", KeyL: "dodge", KeyC: "dodge", KeyE: "heal", KeyH: "heal",
+      Space: "dodge", KeyL: "dodge", KeyC: "dodge", KeyE: "heal", KeyH: "heal", KeyQ: "thrust", KeyI: "thrust", KeyV: "thrust",
     };
     this.onKeyDown = (e) => {
       if (e.code === "Escape") { this.togglePause(); return; }

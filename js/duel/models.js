@@ -1,4 +1,4 @@
-﻿// 主人公(剣士)とボス(鬼面の武将)のモデル。すべてプロシージャルなジオメトリ+PBRマテリアル。
+// 主人公(剣士)とボス(鬼面の武将)のモデル。すべてプロシージャルなジオメトリ+PBRマテリアル。
 import * as THREE from "../../vendor/three/three.module.js";
 import { makeFabric, makeWood, makeWrap } from "./textures.js";
 
@@ -92,11 +92,12 @@ export function makeKatana(S, opt = {}) {
 }
 
 // ================= 主人公 =================
-export function buildPlayer(h) {
+// pal: 着物の色(対人戦で相手と見分けるため)。{ main, dark, accent }
+export function buildPlayer(h, pal = {}) {
   const d = h.dim, S = h.S;
-  const indigo = makeFabric("#1d2745", 256, [3, 3]);
-  const indigoDark = makeFabric("#10141f", 256, [3, 3]);
-  const red = makeFabric("#a3262b", 256, [2, 2]);
+  const indigo = makeFabric(pal.main || "#1d2745", 256, [3, 3]);
+  const indigoDark = makeFabric(pal.dark || "#10141f", 256, [3, 3]);
+  const red = makeFabric(pal.accent || "#a3262b", 256, [2, 2]);
   const cloth = mat({ map: indigo.map, bumpMap: indigo.bump, bumpScale: 0.9, roughness: 0.88, metalness: 0 });
   const clothD = mat({ map: indigoDark.map, bumpMap: indigoDark.bump, bumpScale: 0.9, roughness: 0.9 });
   const clothR = mat({ map: red.map, bumpMap: red.bump, bumpScale: 0.9, roughness: 0.82, side: THREE.DoubleSide });
